@@ -55,7 +55,7 @@ msg_info "Configuring Miniflux"
 mkdir -p /etc/miniflux
 IPADDRESS=$(hostname -i)
 ADMIN_USER="admin"
-ADMIN_PASS="miniflux"
+ADMIN_PASS=$(openssl rand -base64 24 | tr -dc 'a-zA-Z0-9' | head -c20)
 {
   echo "LOG_DATE_TIME=yes"
   echo "LISTEN_ADDR=0.0.0.0:8080"
@@ -73,10 +73,9 @@ ADMIN_PASS="miniflux"
 } >~/miniflux-admin.creds
 msg_ok "Configured Miniflux"
 
-# msg_info "Applying Database Migrations and Creating Admin"
+msg_info "Applying Database Migrations and Creating Admin"
 miniflux -c /etc/miniflux.conf -migrate
-# miniflux -c /etc/miniflux.conf -create-admin
-# msg_ok "Applied Migrations and Created Admin"
+msg_ok "Applied Migrations and Created Admin"
 
 msg_info "Enabling and Starting Miniflux"
 $STD rc-update add miniflux default
